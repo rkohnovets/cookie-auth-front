@@ -13,9 +13,11 @@ export const LoginForm = () => {
     let location = useLocation();
     let auth = useAuth();
     
-    // 1) если нас редиректнуло на страницу логина, то надо будет потом вернуться назад
-    // 2) если же мы сами пришли на страницу логина, 
-    // то после входа надо будет перейти на главную страницу
+    // 1) если нас редиректнуло на страницу логина,
+    // то нужно будет потом редиректнуть назад,
+    // на страницу, куда хотел зайти пользователь
+    // 2) если же мы сами перешли на страницу логина,
+    // то после входа нужно будет перейти на главную страницу
     let from = location.state?.from?.pathname || "/";
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,11 +25,10 @@ export const LoginForm = () => {
 
         setFormDisabled(true);
 
-        // без useState можно вытаскивать значения из формы так:
+        // без useState можно было бы вытаскивать значения из формы так:
         //let formData = new FormData(event.currentTarget);
         //let username = formData.get("username") as string;
 
-        // но у нас с useState
         let loginData = {
             Username: username,
             Password: password
@@ -37,7 +38,10 @@ export const LoginForm = () => {
             // если логин произошёл успешно, но редиректим на путь из from
             // replace: true означает, что в истории не будет записано, что мы заходили на страницу входа
             // (чтоб нельзя было залогиненным уже перейти назад на страницу входа, что было бы нелогично)
-            await auth.signIn(loginData, () => navigate(from, { replace: true }));
+            auth.signIn(
+                loginData,
+                () => navigate(from, { replace: true })
+            );
         } catch(ex) {
             alert(ex);
         } finally {
@@ -51,15 +55,17 @@ export const LoginForm = () => {
 
     return (
         <>
-            { (from != "/") &&
+            { (from !== "/") &&
                 <div className="w-full max-w-xs m-auto text-indigo-500 bg-indigo-100 rounded px-5 py-3 my-2">
                     You must log in to view the page at: {from}
                 </div> }
             <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5 pb-8 my-2">
                 <form onSubmit={handleSubmit} autoComplete='off'>
-                    <InputWithLabel name="username" labelText='Username' type='text'
-                                onChange={(new_val) => setUsername(new_val)} value={username}/>
-                    <InputWithLabel name="password" labelText='Password' type='password'
+                    <InputWithLabel
+                        name="username" labelText='Username' type='text'
+                        onChange={(new_val) => setUsername(new_val)} value={username}/>
+                    <InputWithLabel
+                        name="password" labelText='Password' type='password'
                         onChange={(new_val) => setPassword(new_val)} value={password}/>
                     <FormSubmitButton text='Log In' disabled={formDisabled}/>    
                 </form>  

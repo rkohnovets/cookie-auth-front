@@ -16,7 +16,7 @@ export function AuthStatus() {
               let text = await response.text();
               alert("Status: OK, message: " + text);
           } else {
-              if(response.status == 401)
+              if(response.status === 401)
                 alert("Code " + response.status + "- you are not authenticated");
               else {
                 let text = await response.text();

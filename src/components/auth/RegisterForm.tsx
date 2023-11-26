@@ -38,7 +38,7 @@ export const RegisterForm = () => {
 
     return (
         <>
-            { (from != "/") &&
+            { (from !== "/") &&
                 <div className="w-full max-w-xs m-auto text-indigo-500 bg-indigo-100 rounded px-5 py-3 my-2">
                     You must log in to view the page at: {from}
                 </div> }

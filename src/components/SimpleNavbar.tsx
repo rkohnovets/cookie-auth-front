@@ -10,7 +10,7 @@ export const SimpleNavbar = () => {
 
     const handleLogOut = async () => {
         try {
-            await auth.signOut(() => navigate('/'));
+            auth.signOut(() => navigate('/'));
         } catch(ex) {
             alert(ex);
         }
@@ -30,14 +30,15 @@ export const SimpleNavbar = () => {
                 <NavLink to='/private' className="px-4 pt-2 pb-2.5 mx-1 leading-none rounded hover:bg-gray-700">
                     Private page
                 </NavLink>
-                { auth.user
-                    ? <>
-                        <div className="px-4 pt-2 pb-2.5 mx-1 leading-none rounded bg-gray-800 hover:bg-gray-700"
-                            onClick={handleLogOut}>
-                            Log Out
-                        </div>
-                    </>
-                    : <>
+                {
+                    auth.user
+                    ?
+                    <div className="px-4 pt-2 pb-2.5 mx-1 leading-none rounded bg-gray-800 hover:bg-gray-700"
+                        onClick={handleLogOut}>
+                        Log Out
+                    </div>
+                    :
+                    <>
                         <NavLink to='/login' className="px-4 pt-2 pb-2.5 mx-1 leading-none rounded hover:bg-gray-700">
                             Log In
                         </NavLink>

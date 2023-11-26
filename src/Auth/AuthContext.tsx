@@ -1,30 +1,26 @@
 import React from "react";
 import { api_https } from "../utils/constants";
 
-type SignUpInfo = {
+type RegisterOrLoginInfo = {
     Username: string,
-    Password: string,
-    ConfirmPassword: string
+    Password: string
 }
-// то же самое, что SignUpInfo, но без поля ConfirmPassword
-type SignInInfo = Omit<SignUpInfo, 'ConfirmPassword'>;
-// то же самое, что SignInInfo, но без поля Password
-type User = Omit<SignInInfo, 'Password'>;
+type User = {
+    Username: string
+}
 
 interface AuthContextType {
     user: User | null
-    // коллбэк - например, редирект на какую-то страницу
-    signUp: (newUser: SignUpInfo, callback: VoidFunction) => void,
-    signIn: (user: SignInInfo, callback: VoidFunction) => void;
+    signUp: (user: RegisterOrLoginInfo, callback: VoidFunction) => void,
+    signIn: (user: RegisterOrLoginInfo, callback: VoidFunction) => void;
     signOut: (callback: VoidFunction) => void;
 }
-  
 let AuthContext = React.createContext<AuthContextType>(null!);
-  
+
 function AuthProvider({ children }: { children: React.ReactNode }) {
     let [user, setUser] = React.useState<User | null>(null);
 
-    let signUp = async (newUser: SignUpInfo, callback: VoidFunction) => {
+    let signUp = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
         let response = await fetch(api_https + '/api/auth/register', {
             method: 'POST',
             headers: {
@@ -32,11 +28,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             },
             credentials: 'include',
             mode: 'cors',
-            body: JSON.stringify(newUser)
+            body: JSON.stringify(user)
         });
         
         if(response.ok) {
-            setUser({ Username: newUser.Username });
+            setUser({ Username: user.Username });
             alert("registered and authenticated");
             callback();
         } else {
@@ -45,7 +41,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
     
-    let signIn = async (user: SignInInfo, callback: VoidFunction) => {
+    let signIn = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
         let response = await fetch(api_https + '/api/auth/login', {
             method: 'POST',
             headers: {
@@ -89,8 +85,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// хук для более удобного получения инфы о пользователе 
-// (хотя хз, по моему хуйня, так как все равно одна строка)
+// кастомный хук для более удобного получения инфы о пользователе
 function useAuth() {
     return React.useContext(AuthContext);
 }
