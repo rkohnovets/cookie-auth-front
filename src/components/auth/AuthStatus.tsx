@@ -6,7 +6,7 @@ export function AuthStatus() {
 
   const handleCheckAuth = async () => {
       try {
-          let response = await fetch(api_https + '/WeatherForecast/check_auth', {
+          let response = await fetch(api_https + '/WeatherForecast/check-auth', {
               method: 'GET',
               credentials: 'include',
               mode: 'cors'

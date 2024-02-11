@@ -12,7 +12,7 @@ const ProtectedPage = () => {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async () => {
-            let response = await fetch(api_https + '/WeatherForecast/private_weather', {
+            let response = await fetch(api_https + '/WeatherForecast/private-weather', {
                 method: 'GET',
                 credentials: 'include',
                 mode: 'cors'

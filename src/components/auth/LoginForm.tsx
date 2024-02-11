@@ -23,6 +23,16 @@ export const LoginForm = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        if(!username || username.length === 0) {
+            alert("Username is empty");
+            return;
+        }
+
+        if(!password || password.length === 0) {
+            alert("Password is empty");
+            return;
+        }
+
         setFormDisabled(true);
 
         // без useState можно было бы вытаскивать значения из формы так:

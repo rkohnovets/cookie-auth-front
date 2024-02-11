@@ -18,13 +18,27 @@ export const RegisterForm = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if(!username || username.length === 0) {
+            alert("Username is empty");
+            return;
+        }
+
+        if(!password || password.length === 0) {
+            alert("Password is empty");
+            return;
+        }
+
+        if(password !== confirmPassword) {
+            alert("Passwords don't match");
+            return;
+        }
         
         setSubmitButtonDisabled(true);
 
         let registerData = {
             Username: username,
-            Password: password,
-            ConfirmPassword: confirmPassword
+            Password: password
         }
 
         try {

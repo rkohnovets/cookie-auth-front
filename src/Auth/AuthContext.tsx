@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { api_https } from "../utils/constants";
 
 type RegisterOrLoginInfo = {
     Username: string,
     Password: string
 }
+
 type User = {
     Username: string
 }
@@ -18,9 +19,10 @@ interface AuthContextType {
 let AuthContext = React.createContext<AuthContextType>(null!);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-    let [user, setUser] = React.useState<User | null>(null);
+    const [user, setUser] = React.useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    let signUp = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
+    const signUp = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
         let response = await fetch(api_https + '/api/auth/register', {
             method: 'POST',
             headers: {
@@ -41,7 +43,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
     
-    let signIn = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
+    const signIn = async (user: RegisterOrLoginInfo, callback: VoidFunction) => {
         let response = await fetch(api_https + '/api/auth/login', {
             method: 'POST',
             headers: {
@@ -62,7 +64,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
   
-    let signOut = async (callback: VoidFunction) => {
+    const signOut = async (callback: VoidFunction) => {
         let response = await fetch(api_https + '/api/auth/logout', {
             method: 'GET',
             credentials: 'include',
@@ -79,8 +81,37 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             alert("code " + response.status + "; message: " + text);
         }
     };
+    
+    const checkAuth = async () => {
+        setLoading(true);
+
+        let response = await fetch(api_https + '/api/auth/check', {
+            method: 'GET',
+            credentials: 'include',
+            mode: 'cors'
+        });
+        
+        if(response.ok) {
+            let body = await response.json();
+            //console.log(body);
+            setUser({ Username: body.username });
+            setLoading(false);
+        } else {
+            setUser(null);
+            setLoading(false);
+        }
+
+    };
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
   
     let value = { user, signIn, signUp, signOut };
+
+    if(loading) {
+        return <div>Loading...</div>;
+    }
   
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
